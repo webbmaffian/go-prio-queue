@@ -62,3 +62,34 @@ func (q *queue[V, P]) Push(value V, prio P) {
 		i++
 	}
 }
+
+func (q *queue[V, P]) PushReturnedValue(prio P, cb func(V) V) {
+	if q.length == max && prio >= q.prios[q.start+q.length-1] {
+		return
+	}
+
+	if q.length != max {
+		q.length++
+	}
+
+	// Put value first in queue
+	q.start--
+	q.values[q.start] = cb(q.values[q.start])
+	q.prios[q.start] = prio
+
+	i := q.start
+
+	for {
+		j := i + 1
+
+		if j == q.start+q.length || q.prios[i] < q.prios[j] {
+			break
+		}
+
+		q.values[i], q.values[j] = q.values[j], q.values[i]
+		q.prios[i], q.prios[j] = q.prios[j], q.prios[i]
+
+		i++
+	}
+
+}
