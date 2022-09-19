@@ -18,11 +18,8 @@ type Queue[V any, P number] interface {
 	Reset()
 
 	// Remove and return the first value in the queue.
-	Pop() (value V, prio P)
+	Pop() (value *V, prio P)
 
 	// Add value to queue.
 	Push(value V, prio P)
-
-	// Add the returned value from callback to queue. Handy for juggling pointers.
-	PushReturnedValue(prio P, cb func(V) V)
 }

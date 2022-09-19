@@ -7,11 +7,12 @@ import (
 
 func BenchmarkPushSequential(b *testing.B) {
 	q := NewQueue[struct{}, int]()
+	s := struct{}{}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		q.Push(struct{}{}, i)
+		q.Push(s, i)
 	}
 }
 
@@ -19,59 +20,64 @@ func BenchmarkPushRandom(b *testing.B) {
 	q := NewQueue[struct{}, byte]()
 	nums := make([]byte, b.N)
 	rand.Read(nums)
+	s := struct{}{}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		q.Push(struct{}{}, nums[i])
+		q.Push(s, nums[i])
 	}
 }
 
-func BenchmarkPushSequentialPointers(b *testing.B) {
+func BenchmarkPushSequentialStruct(b *testing.B) {
 	type foobar struct {
 		foo string
 	}
 
-	q := NewQueue[*foobar, int]()
+	q := NewQueue[foobar, int]()
+	var s foobar
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		q.Push(&foobar{foo: "bar"}, i)
+		s = foobar{foo: "bar"}
+		q.Push(s, i)
 	}
 }
 
-func BenchmarkPushSequentialReturnedPointers(b *testing.B) {
-	type foobar struct {
-		foo string
-	}
+// func BenchmarkPushSequentialReturnedPointers(b *testing.B) {
+// 	type foobar struct {
+// 		foo string
+// 	}
 
-	q := NewQueue[*foobar, int]()
+// 	q := NewQueue[*foobar, int]()
 
-	b.ResetTimer()
+// 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		q.PushReturnedValue(i, func(f *foobar) *foobar {
-			if f == nil {
-				f = &foobar{}
-			}
+// 	for i := 0; i < b.N; i++ {
+// 		q.PushReturnedValue(i, func(f *foobar) *foobar {
+// 			if f == nil {
+// 				f = &foobar{}
+// 			}
 
-			f.foo = "baz"
+// 			f.foo = "baz"
 
-			return f
-		})
-	}
-}
+// 			return f
+// 		})
+// 	}
+// }
 
 func BenchmarkPop(b *testing.B) {
 	q := NewQueue[struct{}, int]()
+	s := struct{}{}
+
 	for i := 0; i < b.N; i++ {
-		q.Push(struct{}{}, i)
+		q.Push(s, i)
 	}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		q.Pop()
+		_, _ = q.Pop()
 	}
 }
