@@ -6,10 +6,11 @@ func NewQueue[V any, P number]() Queue[V, P] {
 }
 
 type queue[V any, P number] struct {
-	values [256]*V
-	prios  [256]P
-	start  uint8
-	length uint8
+	values     [256]*V
+	prios      [256]P
+	lastPopped *V
+	start      uint8
+	length     uint8
 }
 
 func (q *queue[V, P]) Length() uint8 {
@@ -26,7 +27,9 @@ func (q *queue[V, P]) Pop() (value *V, prio P) {
 		return
 	}
 
-	value = q.values[q.start]
+	q.values[q.start], q.lastPopped = q.lastPopped, q.values[q.start]
+
+	value = q.lastPopped
 	prio = q.prios[q.start]
 	q.start++
 	q.length--
