@@ -1,5 +1,6 @@
 # Go Prio Queue
 A highly optimized [priority queue](https://en.wikipedia.org/wiki/Priority_queue) with generics. See [benchmark](#benchmark).
+- Support for min, max and custom priority comparator.
 - 100% Go.
 - Zero dependencies.
 - Zero allocations for push/pop operations.
@@ -13,7 +14,7 @@ go get github.com/webbmaffian/go-prio-queue
 
 ## Usage
 
-### Min heap (ascending priority queue)
+### Min (ascending) priority queue
 ```go
 q := NewMinQueue[string, float64]()
 
@@ -30,7 +31,7 @@ for !q.Empty() {
 // a 56
 ```
 
-### Max heap (descending priority queue)
+### Max (descending) priority queue
 ```go
 q := NewMaxQueue[string, float64]()
 
@@ -45,6 +46,37 @@ for !q.Empty() {
 // a 56
 // c 34
 // b 12
+```
+
+### Priority queue with custom comparator
+The `compare` function should return `true` if `a` has higher priority than `b`.
+```go
+// Prioritize even numbers
+func compare(a, b float64) bool {
+    if a % 2 == 0 && b % 2 == 1 {
+        return true
+    }
+
+    return a < b
+}
+
+q := NewQueue[string, float64](compare)
+
+q.Push("a", 1)
+q.Push("b", 2)
+q.Push("c", 3)
+q.Push("d", 4)
+q.Push("e", 5)
+
+for !q.Empty() {
+    log.Println(q.Pop())
+}
+
+// b 2
+// d 4
+// a 1
+// c 3
+// e 5
 ```
 
 ## Benchmark

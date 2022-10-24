@@ -10,7 +10,7 @@ func NewQueue[V any, P Number](compare func(a, b P) bool, maxSize ...uint64) Que
 	return newCustomQueue[V](compare, maxSize[0])
 }
 
-// Same as `NewQueue` but with a min heap (ascending queue).
+// Min (ascending) priority queue.
 func NewMinQueue[V any, P Number](maxSize ...uint64) Queue[V, P] {
 	if len(maxSize) == 0 || maxSize[0] == 0 || maxSize[0] == smallQueueMaxSize {
 		return newSmallQueue[V](Asc[P])
@@ -19,7 +19,7 @@ func NewMinQueue[V any, P Number](maxSize ...uint64) Queue[V, P] {
 	return newCustomQueue[V](Asc[P], maxSize[0])
 }
 
-// Same as `NewQueue` but with a max heap (descending queue).
+// Max (descending) priority queue.
 func NewMaxQueue[V any, P Number](maxSize ...uint64) Queue[V, P] {
 	if len(maxSize) == 0 || maxSize[0] == 0 || maxSize[0] == smallQueueMaxSize {
 		return newSmallQueue[V](Desc[P])
