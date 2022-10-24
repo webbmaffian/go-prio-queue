@@ -1,20 +1,22 @@
 package prioqueue
 
-import "math"
-
-const max uint8 = math.MaxUint8
-
 // Any number.
-type number interface {
+type Number interface {
 	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
 }
 
-type Queue[V any, P number] interface {
+type Queue[V any, P Number] interface {
 
-	// Get the current length of the queue.
-	Length() uint8
+	// Get current size of the queue.
+	Size() uint64
 
-	// Reset the queue for reuse.
+	// Get max size of the queue.
+	MaxSize() uint64
+
+	// Return whether queue is empty.
+	Empty() bool
+
+	// Reset queue for reuse.
 	Reset()
 
 	// Remove and return the first value in the queue.
