@@ -10,6 +10,18 @@ func newSmallQueue[V any, P Number](compare func(a, b P) bool) Queue[V, P] {
 	}
 }
 
+func newSmallAscQueue[V any, P Number]() Queue[V, P] {
+	return &smallQueue[V, P]{
+		compare: Asc[P],
+	}
+}
+
+func newSmallDescQueue[V any, P Number]() Queue[V, P] {
+	return &smallQueue[V, P]{
+		compare: Desc[P],
+	}
+}
+
 type smallQueue[V any, P Number] struct {
 	values     [256]*V
 	prios      [256]P

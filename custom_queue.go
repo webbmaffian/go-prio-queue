@@ -74,8 +74,6 @@ func (q *customQueue[V, P]) Push(value V, prio P) {
 	for {
 		j := (i + 1) % q.maxSize
 
-		// log.Println(i, j, q.start, q.size, q.maxSize)
-
 		if j == (q.start+q.size)%q.maxSize || q.prios[i] < q.prios[j] {
 			break
 		}
