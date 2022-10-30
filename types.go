@@ -20,7 +20,7 @@ type Queue[V any, P Number] interface {
 	Reset()
 
 	// Remove and return the first value in the queue.
-	Pop() (value *V, prio P)
+	Pop() (value V, prio P)
 
 	// Add value to queue.
 	Push(value V, prio P)

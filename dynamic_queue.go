@@ -1,3 +1,4 @@
+// Fibonacci Heap
 // Credits: https://github.com/theodesp/go-heaps
 package prioqueue
 
@@ -69,7 +70,7 @@ func (q *dynamicQueue[V, P]) Peek() (value V, prio P) {
 
 // DeleteMin extracts the node with minimum item from a heap
 // and returns the minimum item.
-func (q *dynamicQueue[V, P]) Pop() (value *V, prio P) {
+func (q *dynamicQueue[V, P]) Pop() (value V, prio P) {
 	r := q.root
 	if r == nil {
 		return
@@ -106,7 +107,7 @@ func (q *dynamicQueue[V, P]) Pop() (value *V, prio P) {
 
 	q.size--
 
-	return &r.value, r.prio
+	return r.value, r.prio
 }
 
 func (q *dynamicQueue[V, P]) consolidate() {

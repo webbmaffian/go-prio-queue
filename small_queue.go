@@ -23,12 +23,11 @@ func NewSmallMaxQueue[V any, P Number]() Queue[V, P] {
 }
 
 type smallQueue[V any, P Number] struct {
-	values     [256]*V
-	prios      [256]P
-	lastPopped *V
-	start      uint8
-	size       uint8
-	compare    func(a, b P) bool
+	values  [256]*V
+	prios   [256]P
+	start   uint8
+	size    uint8
+	compare func(a, b P) bool
 }
 
 func (q *smallQueue[V, P]) Size() uint64 {
@@ -48,14 +47,12 @@ func (q *smallQueue[v, P]) Reset() {
 	q.size = 0
 }
 
-func (q *smallQueue[V, P]) Pop() (value *V, prio P) {
+func (q *smallQueue[V, P]) Pop() (value V, prio P) {
 	if q.size == 0 || q.values[q.start] == nil {
 		return
 	}
 
-	q.values[q.start], q.lastPopped = q.lastPopped, q.values[q.start]
-
-	value = q.lastPopped
+	value = *q.values[q.start]
 	prio = q.prios[q.start]
 	q.start++
 	q.size--

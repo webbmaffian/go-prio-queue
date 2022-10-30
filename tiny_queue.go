@@ -21,12 +21,11 @@ func NewTinyMaxQueue[V any, P Number]() Queue[V, P] {
 const tinyQueueMaxSize = 64
 
 type tinyQueue[V any, P Number] struct {
-	values     [tinyQueueMaxSize]*V
-	prios      [tinyQueueMaxSize]P
-	lastPopped *V
-	start      uint8
-	size       uint8
-	compare    func(a, b P) bool
+	values  [tinyQueueMaxSize]*V
+	prios   [tinyQueueMaxSize]P
+	start   uint8
+	size    uint8
+	compare func(a, b P) bool
 }
 
 func (q *tinyQueue[V, P]) Size() uint64 {
@@ -46,14 +45,12 @@ func (q *tinyQueue[v, P]) Reset() {
 	q.size = 0
 }
 
-func (q *tinyQueue[V, P]) Pop() (value *V, prio P) {
+func (q *tinyQueue[V, P]) Pop() (value V, prio P) {
 	if q.size == 0 || q.values[q.start] == nil {
 		return
 	}
 
-	q.values[q.start], q.lastPopped = q.lastPopped, q.values[q.start]
-
-	value = q.lastPopped
+	value = *q.values[q.start]
 	prio = q.prios[q.start]
 	q.start = (q.start + 1) % tinyQueueMaxSize
 	q.size--
