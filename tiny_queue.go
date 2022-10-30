@@ -1,12 +1,18 @@
 package prioqueue
 
-func newTinyAscQueue[V any, P Number]() Queue[V, P] {
+func NewTinyQueue[V any, P Number](compare func(a, b P) bool) Queue[V, P] {
+	return &tinyQueue[V, P]{
+		compare: compare,
+	}
+}
+
+func NewTinyMinQueue[V any, P Number]() Queue[V, P] {
 	return &tinyQueue[V, P]{
 		compare: Asc[P],
 	}
 }
 
-func newTinyDescQueue[V any, P Number]() Queue[V, P] {
+func NewTinyMaxQueue[V any, P Number]() Queue[V, P] {
 	return &tinyQueue[V, P]{
 		compare: Desc[P],
 	}

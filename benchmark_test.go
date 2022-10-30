@@ -1,87 +1,77 @@
 package prioqueue
 
 import (
-	"math/rand"
+	"crypto/rand"
 	"strconv"
 	"testing"
 )
 
-var testSizes = []uint64{16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384}
-
-func BenchmarkTinyQueueNew(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
+func BenchmarkMinQueue_New(b *testing.B) {
+	b.Run("Tiny_"+strconv.Itoa(tinyQueueMaxSize), func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			_ = newTinyAscQueue[struct{}, byte]()
+			_ = NewTinyMinQueue[struct{}, uint8]()
+		}
+	})
+
+	b.Run("Small_"+strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = NewSmallMinQueue[struct{}, uint8]()
+		}
+	})
+
+	b.Run("Dynamic", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = NewDynamicMinQueue[struct{}, uint8]()
 		}
 	})
 }
 
-func BenchmarkTinyQueuePush(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
-		q := newTinyAscQueue[struct{}, byte]()
-		nums := make([]byte, b.N)
-		rand.Read(nums)
-		s := struct{}{}
+func BenchmarkMinQueue_Push(b *testing.B) {
+	b.Run("Tiny_"+strconv.Itoa(tinyQueueMaxSize), func(b *testing.B) {
+		q := NewTinyMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			q.Push(s, nums[i])
+			q.Push(struct{}{}, prios[i])
 		}
 	})
-}
 
-func BenchmarkTinyQueuePop(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
-		q := newTinyAscQueue[struct{}, byte]()
-		nums := make([]byte, b.N)
-		rand.Read(nums)
-		s := struct{}{}
-
-		for i := 0; i < b.N; i++ {
-			q.Push(s, nums[i])
-		}
+	b.Run("Small_"+strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
+		q := NewSmallMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			_, _ = q.Pop()
+			q.Push(struct{}{}, prios[i])
 		}
 	})
-}
 
-func BenchmarkSmallQueueNew(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			_ = newSmallAscQueue[struct{}, byte]()
-		}
-	})
-}
-
-func BenchmarkSmallQueuePush(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
-		q := newSmallAscQueue[struct{}, byte]()
-		nums := make([]byte, b.N)
-		rand.Read(nums)
-		s := struct{}{}
+	b.Run("Dynamic", func(b *testing.B) {
+		q := NewDynamicMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			q.Push(s, nums[i])
+			q.Push(struct{}{}, prios[i])
 		}
 	})
 }
 
-func BenchmarkSmallQueuePop(b *testing.B) {
-	b.Run(strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
-		q := newSmallAscQueue[struct{}, byte]()
-		nums := make([]byte, b.N)
-		rand.Read(nums)
-		s := struct{}{}
+func BenchmarkMinQueue_Pop(b *testing.B) {
+	b.Run("Tiny_"+strconv.Itoa(tinyQueueMaxSize), func(b *testing.B) {
+		q := NewTinyMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
 		for i := 0; i < b.N; i++ {
-			q.Push(s, nums[i])
+			q.Push(struct{}{}, prios[i])
 		}
 
 		b.ResetTimer()
@@ -90,52 +80,36 @@ func BenchmarkSmallQueuePop(b *testing.B) {
 			_, _ = q.Pop()
 		}
 	})
-}
 
-func BenchmarkCustomQueueNew(b *testing.B) {
-	for _, size := range testSizes {
-		b.Run(strconv.Itoa(int(size)), func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				_ = newCustomQueue[struct{}](Asc[byte], 16)
-			}
-		})
-	}
-}
+	b.Run("Small_"+strconv.Itoa(smallQueueMaxSize), func(b *testing.B) {
+		q := NewSmallMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
-func BenchmarkCustomQueuePush(b *testing.B) {
-	for _, size := range testSizes {
-		b.Run(strconv.Itoa(int(size)), func(b *testing.B) {
-			q := newCustomQueue[struct{}](Asc[byte], size)
-			nums := make([]byte, b.N)
-			rand.Read(nums)
-			s := struct{}{}
+		for i := 0; i < b.N; i++ {
+			q.Push(struct{}{}, prios[i])
+		}
 
-			b.ResetTimer()
+		b.ResetTimer()
 
-			for i := 0; i < b.N; i++ {
-				q.Push(s, nums[i])
-			}
-		})
-	}
-}
+		for i := 0; i < b.N; i++ {
+			_, _ = q.Pop()
+		}
+	})
 
-func BenchmarkCustomQueuePop(b *testing.B) {
-	for _, size := range testSizes {
-		b.Run(strconv.Itoa(int(size)), func(b *testing.B) {
-			q := newCustomQueue[struct{}](Asc[byte], size)
-			nums := make([]byte, b.N)
-			rand.Read(nums)
-			s := struct{}{}
+	b.Run("Dynamic", func(b *testing.B) {
+		q := NewDynamicMinQueue[struct{}, uint8]()
+		prios := make([]byte, b.N)
+		rand.Read(prios)
 
-			for i := 0; i < b.N; i++ {
-				q.Push(s, nums[i])
-			}
+		for i := 0; i < b.N; i++ {
+			q.Push(struct{}{}, prios[i])
+		}
 
-			b.ResetTimer()
+		b.ResetTimer()
 
-			for i := 0; i < b.N; i++ {
-				_, _ = q.Pop()
-			}
-		})
-	}
+		for i := 0; i < b.N; i++ {
+			_, _ = q.Pop()
+		}
+	})
 }

@@ -4,19 +4,19 @@ import "math"
 
 const smallQueueMaxSize = math.MaxUint8
 
-func newSmallQueue[V any, P Number](compare func(a, b P) bool) Queue[V, P] {
+func NewSmallQueue[V any, P Number](compare func(a, b P) bool) Queue[V, P] {
 	return &smallQueue[V, P]{
 		compare: compare,
 	}
 }
 
-func newSmallAscQueue[V any, P Number]() Queue[V, P] {
+func NewSmallMinQueue[V any, P Number]() Queue[V, P] {
 	return &smallQueue[V, P]{
 		compare: Asc[P],
 	}
 }
 
-func newSmallDescQueue[V any, P Number]() Queue[V, P] {
+func NewSmallMaxQueue[V any, P Number]() Queue[V, P] {
 	return &smallQueue[V, P]{
 		compare: Desc[P],
 	}
