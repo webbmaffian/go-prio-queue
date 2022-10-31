@@ -45,6 +45,22 @@ func (q *tinyQueue[v, P]) Reset() {
 	q.size = 0
 }
 
+func (q *tinyQueue[V, P]) Peek(idx ...uint64) (value V, prio P) {
+	i := q.start
+
+	if idx != nil {
+		i += uint8(idx[0])
+	}
+
+	i = q.wrap(i)
+
+	if q.values[i] == nil {
+		return
+	}
+
+	return *q.values[i], q.prios[i]
+}
+
 func (q *tinyQueue[V, P]) Pop() (value V, prio P) {
 	if q.size == 0 || q.values[q.start] == nil {
 		return
@@ -52,13 +68,13 @@ func (q *tinyQueue[V, P]) Pop() (value V, prio P) {
 
 	value = *q.values[q.start]
 	prio = q.prios[q.start]
-	q.start = (q.start + 1) % tinyQueueMaxSize
+	q.start = q.wrap(q.start + 1)
 	q.size--
 	return
 }
 
 func (q *tinyQueue[V, P]) Push(value V, prio P) {
-	if q.size == tinyQueueMaxSize && !q.compare(prio, q.prios[(q.start+q.size-1)%tinyQueueMaxSize]) {
+	if q.size == tinyQueueMaxSize && !q.compare(prio, q.prios[q.wrap(q.start+q.size-1)]) {
 		return
 	}
 
@@ -67,7 +83,7 @@ func (q *tinyQueue[V, P]) Push(value V, prio P) {
 	}
 
 	// Put value first in queue
-	q.start = (q.start - 1) % tinyQueueMaxSize
+	q.start = q.wrap(q.start - 1)
 
 	if q.values[q.start] == nil {
 		q.values[q.start] = new(V)
@@ -77,17 +93,22 @@ func (q *tinyQueue[V, P]) Push(value V, prio P) {
 	q.prios[q.start] = prio
 
 	i := q.start
+	end := q.wrap(q.start + q.size)
 
 	for {
-		j := (i + 1) % tinyQueueMaxSize
+		j := q.wrap(i + 1)
 
-		if j == (q.start+q.size)%tinyQueueMaxSize || q.compare(q.prios[i], q.prios[j]) {
+		if j == end || q.compare(q.prios[i], q.prios[j]) {
 			break
 		}
 
 		q.values[i], q.values[j] = q.values[j], q.values[i]
 		q.prios[i], q.prios[j] = q.prios[j], q.prios[i]
 
-		i = (i + 1) % tinyQueueMaxSize
+		i = q.wrap(i + 1)
 	}
+}
+
+func (q *tinyQueue[V, P]) wrap(i uint8) uint8 {
+	return (i + tinyQueueMaxSize) % tinyQueueMaxSize
 }

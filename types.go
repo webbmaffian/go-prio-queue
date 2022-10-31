@@ -19,6 +19,8 @@ type Queue[V any, P Number] interface {
 	// Reset queue for reuse.
 	Reset()
 
+	Peek(idx ...uint64) (value V, prio P)
+
 	// Remove and return the first value in the queue.
 	Pop() (value V, prio P)
 
