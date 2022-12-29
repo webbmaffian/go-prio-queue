@@ -73,6 +73,19 @@ func (q *smallQueue[V, P]) Pop() (value V, prio P) {
 	return
 }
 
+func (q *smallQueue[V, P]) PopLast() (value V, prio P) {
+	i := q.start + q.size - 1
+
+	if q.size == 0 || q.values[i] == nil {
+		return
+	}
+
+	value = *q.values[i]
+	prio = q.prios[i]
+	q.size--
+	return
+}
+
 func (q *smallQueue[V, P]) Push(value V, prio P) {
 	if q.size == smallQueueMaxSize && !q.compare(prio, q.prios[q.start+q.size-1]) {
 		return

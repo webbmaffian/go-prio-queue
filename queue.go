@@ -82,6 +82,19 @@ func (q *queue[V, P]) Pop() (value V, prio P) {
 	return
 }
 
+func (q *queue[V, P]) PopLast() (value V, prio P) {
+	i := q.wrap(q.start + q.size - 1)
+
+	if q.size == 0 || q.items[i] == nil {
+		return
+	}
+
+	value = q.items[i].value
+	prio = q.items[i].prio
+	q.size--
+	return
+}
+
 func (q *queue[V, P]) Push(value V, prio P) {
 	if q.size == q.maxSize && !q.compare(prio, q.items[q.wrap(q.start+q.size-1)].prio) {
 		return

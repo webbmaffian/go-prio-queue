@@ -26,6 +26,9 @@ type Queue[V any, P Number] interface {
 	// Remove and return the first value in the queue.
 	Pop() (value V, prio P)
 
+	// Remove and return the last value in the queue.
+	PopLast() (value V, prio P)
+
 	// Add value to queue.
 	Push(value V, prio P)
 }

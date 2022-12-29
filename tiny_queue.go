@@ -73,6 +73,19 @@ func (q *tinyQueue[V, P]) Pop() (value V, prio P) {
 	return
 }
 
+func (q *tinyQueue[V, P]) PopLast() (value V, prio P) {
+	i := q.wrap(q.start + q.size - 1)
+
+	if q.size == 0 || q.values[i] == nil {
+		return
+	}
+
+	value = *q.values[i]
+	prio = q.prios[i]
+	q.size--
+	return
+}
+
 func (q *tinyQueue[V, P]) Push(value V, prio P) {
 	if q.size == tinyQueueMaxSize && !q.compare(prio, q.prios[q.wrap(q.start+q.size-1)]) {
 		return
