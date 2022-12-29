@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+type dummyDynamicItem struct{}
+
+func (d dummyDynamicItem) HigherThan(item DynamicQueueItem) bool {
+	return true
+}
+
 func BenchmarkMinQueue_New(b *testing.B) {
 	b.Run("Tiny_"+strconv.Itoa(tinyQueueMaxSize), func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
@@ -19,9 +25,15 @@ func BenchmarkMinQueue_New(b *testing.B) {
 		}
 	})
 
-	b.Run("Dynamic", func(b *testing.B) {
+	b.Run("Normal", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			_ = NewMinQueue[struct{}, uint8](256)
+		}
+	})
+
+	b.Run("Dynamic", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = make(DynamicQueue, 0, 256)
 		}
 	})
 }
@@ -51,7 +63,7 @@ func BenchmarkMinQueue_Push(b *testing.B) {
 		}
 	})
 
-	b.Run("Dynamic", func(b *testing.B) {
+	b.Run("Normal", func(b *testing.B) {
 		q := NewMinQueue[struct{}, uint8](256)
 		prios := make([]byte, b.N)
 		rand.Read(prios)
@@ -60,6 +72,16 @@ func BenchmarkMinQueue_Push(b *testing.B) {
 
 		for i := 0; i < b.N; i++ {
 			q.Push(struct{}{}, prios[i])
+		}
+	})
+
+	b.Run("Dynamic", func(b *testing.B) {
+		q := make(DynamicQueue, 0, 256)
+
+		b.ResetTimer()
+
+		for i := 0; i < b.N; i++ {
+			q.Push(dummyDynamicItem{})
 		}
 	})
 }
@@ -97,7 +119,7 @@ func BenchmarkMinQueue_Pop(b *testing.B) {
 		}
 	})
 
-	b.Run("Dynamic", func(b *testing.B) {
+	b.Run("Normal", func(b *testing.B) {
 		q := NewMinQueue[struct{}, uint8](256)
 		prios := make([]byte, b.N)
 		rand.Read(prios)
@@ -110,6 +132,20 @@ func BenchmarkMinQueue_Pop(b *testing.B) {
 
 		for i := 0; i < b.N; i++ {
 			_, _ = q.Pop()
+		}
+	})
+
+	b.Run("Dynamic", func(b *testing.B) {
+		q := make(DynamicQueue, 0, 256)
+
+		for i := 0; i < b.N; i++ {
+			q.Push(dummyDynamicItem{})
+		}
+
+		b.ResetTimer()
+
+		for i := 0; i < b.N; i++ {
+			_ = q.Pop()
 		}
 	})
 }
@@ -135,7 +171,7 @@ func BenchmarkMinQueue_Peek(b *testing.B) {
 		}
 	})
 
-	b.Run("Dynamic", func(b *testing.B) {
+	b.Run("Normal", func(b *testing.B) {
 		q := NewMinQueue[struct{}, uint8](256)
 
 		b.ResetTimer()
