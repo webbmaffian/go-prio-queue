@@ -23,7 +23,7 @@ func NewDynamicMaxQueue[V any, P Number]() Queue[V, P] {
 // FibonacciHeap is a implementation of Fibonacci heap.
 type dynamicQueue[V any, P Number] struct {
 	root    *node[V, P]
-	size    uint64
+	size    int
 	compare func(a, b P) bool
 }
 
@@ -40,11 +40,11 @@ func (q *dynamicQueue[V, P]) Empty() bool {
 	return q.root == nil
 }
 
-func (q *dynamicQueue[V, P]) Size() uint64 {
+func (q *dynamicQueue[V, P]) Size() int {
 	return q.size
 }
 
-func (q *dynamicQueue[V, P]) MaxSize() uint64 {
+func (q *dynamicQueue[V, P]) MaxSize() int {
 	return 0
 }
 

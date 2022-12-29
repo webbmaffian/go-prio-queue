@@ -1,6 +1,6 @@
 package prioqueue
 
-func NewQueue[V any, P Number](compare func(a, b P) bool, maxSize uint64) Queue[V, P] {
+func NewQueue[V any, P Number](compare func(a, b P) bool, maxSize int) Queue[V, P] {
 	return &queue[V, P]{
 		items:   make([]*queueItem[V, P], maxSize),
 		maxSize: maxSize,
@@ -8,7 +8,7 @@ func NewQueue[V any, P Number](compare func(a, b P) bool, maxSize uint64) Queue[
 	}
 }
 
-func NewMinQueue[V any, P Number](maxSize uint64) Queue[V, P] {
+func NewMinQueue[V any, P Number](maxSize int) Queue[V, P] {
 	return &queue[V, P]{
 		items:   make([]*queueItem[V, P], maxSize),
 		maxSize: maxSize,
@@ -16,7 +16,7 @@ func NewMinQueue[V any, P Number](maxSize uint64) Queue[V, P] {
 	}
 }
 
-func NewMaxQueue[V any, P Number](maxSize uint64) Queue[V, P] {
+func NewMaxQueue[V any, P Number](maxSize int) Queue[V, P] {
 	return &queue[V, P]{
 		items:   make([]*queueItem[V, P], maxSize),
 		maxSize: maxSize,
@@ -31,17 +31,17 @@ type queueItem[V any, P Number] struct {
 
 type queue[V any, P Number] struct {
 	items   []*queueItem[V, P]
-	start   uint64
-	size    uint64
-	maxSize uint64
+	start   int
+	size    int
+	maxSize int
 	compare func(a, b P) bool
 }
 
-func (q *queue[V, P]) Size() uint64 {
-	return uint64(q.size)
+func (q *queue[V, P]) Size() int {
+	return q.size
 }
 
-func (q *queue[V, P]) MaxSize() uint64 {
+func (q *queue[V, P]) MaxSize() int {
 	return q.maxSize
 }
 
@@ -54,7 +54,7 @@ func (q *queue[v, P]) Reset() {
 	q.size = 0
 }
 
-func (q *queue[V, P]) Peek(idx ...uint64) (value V, prio P) {
+func (q *queue[V, P]) Peek(idx ...int) (value V, prio P) {
 	i := q.start
 
 	if idx != nil {
@@ -117,6 +117,6 @@ func (q *queue[V, P]) Push(value V, prio P) {
 	}
 }
 
-func (q *queue[V, P]) wrap(i uint64) uint64 {
+func (q *queue[V, P]) wrap(i int) int {
 	return (i + q.maxSize) % q.maxSize
 }

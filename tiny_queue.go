@@ -28,11 +28,11 @@ type tinyQueue[V any, P Number] struct {
 	compare func(a, b P) bool
 }
 
-func (q *tinyQueue[V, P]) Size() uint64 {
-	return uint64(q.size)
+func (q *tinyQueue[V, P]) Size() int {
+	return int(q.size)
 }
 
-func (q *tinyQueue[V, P]) MaxSize() uint64 {
+func (q *tinyQueue[V, P]) MaxSize() int {
 	return tinyQueueMaxSize
 }
 
@@ -45,7 +45,7 @@ func (q *tinyQueue[v, P]) Reset() {
 	q.size = 0
 }
 
-func (q *tinyQueue[V, P]) Peek(idx ...uint64) (value V, prio P) {
+func (q *tinyQueue[V, P]) Peek(idx ...int) (value V, prio P) {
 	i := q.start
 
 	if idx != nil {

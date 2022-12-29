@@ -8,10 +8,10 @@ type Number interface {
 type Queue[V any, P Number] interface {
 
 	// Get current size of the queue.
-	Size() uint64
+	Size() int
 
 	// Get max size of the queue.
-	MaxSize() uint64
+	MaxSize() int
 
 	// Return whether queue is empty.
 	Empty() bool
@@ -19,7 +19,9 @@ type Queue[V any, P Number] interface {
 	// Reset queue for reuse.
 	Reset()
 
-	Peek(idx ...uint64) (value V, prio P)
+	// Return a value without removing it from queue. Defaults to the first value. A negative index will begin
+	// from the end (e.g. `Peek(-1)` will return the last value).
+	Peek(idx ...int) (value V, prio P)
 
 	// Remove and return the first value in the queue.
 	Pop() (value V, prio P)
